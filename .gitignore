@@ -32,3 +32,16 @@ Thumbs.db
 dist/
 build/
 *.egg-info/
+
+# Release binaries
+*.apk
+*.ipa
+*.app/
+releases/
+
+# Flutter
+mobile/build/
+mobile/.dart_tool/
+mobile/.packages
+mobile/ios/Pods/
+mobile/ios/.symlinks/
