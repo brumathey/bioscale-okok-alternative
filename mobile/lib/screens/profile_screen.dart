@@ -153,6 +153,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         children: [
                           _formLabel(I18nService.t('profile.family_member')),
                           DropdownButtonFormField<int>(
+                            key: ValueKey(_selectedUserId),
                             initialValue: _selectedUserId,
                             items: _users.map((u) {
                               return DropdownMenuItem<int>(

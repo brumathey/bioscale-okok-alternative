@@ -43,3 +43,4 @@ flutter:
   assets:
     - assets/i18n/
     - assets/icons/
+    - assets/icon/

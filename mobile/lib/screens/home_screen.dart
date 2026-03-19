@@ -309,7 +309,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('⚖️', style: TextStyle(fontSize: 64)),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(24),
+                  child: Image.asset(
+                    'assets/icon/ic_launcher.png',
+                    width: 120,
+                    height: 120,
+                  ),
+                ),
                 const SizedBox(height: 24),
                 const Text(
                   'BioScale',
@@ -484,6 +491,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           label: I18nService.t('overview.quick_composition'),
           onTap: () async {
             await context.push('/composition');
+            _loadData();
+          },
+        ),
+        const SizedBox(width: 12),
+        _actionBtn(
+          icon: Icons.person_outline,
+          label: I18nService.t('overview.quick_profile'),
+          onTap: () async {
+            await context.push('/profile');
             _loadData();
           },
         ),
