@@ -799,14 +799,26 @@ Map<String, ClassificationResult> getClassifications(
     String label;
     String color;
     if (diff.abs() < 3) {
-      label = t('zone.ideal_weight.2');
+      label = t('zone.ideal_weight.2'); // Ideal
       color = 'success';
-    } else if (diff.abs() < 8) {
-      label = t('zone.ideal_weight.3');
-      color = 'warning';
+    } else if (diff < -3) {
+      // Abaixo do ideal
+      if (diff.abs() < 8) {
+        label = t('zone.ideal_weight.1'); // Magro/Lean
+        color = 'info';
+      } else {
+        label = t('zone.ideal_weight.4'); // Longe/Far
+        color = 'danger';
+      }
     } else {
-      label = t('zone.ideal_weight.4');
-      color = 'danger';
+      // Acima do ideal
+      if (diff < 8) {
+        label = t('zone.ideal_weight.3'); // Acima/Above
+        color = 'warning';
+      } else {
+        label = t('zone.ideal_weight.4'); // Longe/Far
+        color = 'danger';
+      }
     }
     final desc = t('desc.ideal_weight').replaceAll('{diff}', diff.toStringAsFixed(1));
     cls['ideal_weight'] = ClassificationResult(

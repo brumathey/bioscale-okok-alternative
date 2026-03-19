@@ -143,12 +143,25 @@ class _MetricRowState extends State<MetricRow> {
   Widget _buildZoneBar(ClassificationResult c) {
     if (c.bounds.length < 3) return const SizedBox.shrink();
 
-    final min = c.bounds.first - (c.bounds.last - c.bounds.first) * 0.3;
-    final max = c.bounds.last + (c.bounds.last - c.bounds.first) * 0.3;
+    final boundsRange = c.bounds.last - c.bounds.first;
+    if (boundsRange <= 0) return const SizedBox.shrink();
+
+    final min = c.bounds.first - boundsRange * 0.3;
+    final max = c.bounds.last + boundsRange * 0.3;
     final range = max - min;
-    if (range <= 0) return const SizedBox.shrink();
 
     final pos = ((c.value - min) / range).clamp(0.0, 1.0);
+
+    // Calculate zone edges: [min, b0, b1, b2, max]
+    final edges = [min, ...c.bounds, max];
+    // Each zone width as flex value (multiplied by 1000 for int precision)
+    final flexValues = <int>[];
+    for (int i = 0; i < edges.length - 1; i++) {
+      flexValues.add(((edges[i + 1] - edges[i]) / range * 1000).round().clamp(1, 1000));
+    }
+
+    const barHeight = 6.0;
+    const radius = Radius.circular(3);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -156,16 +169,30 @@ class _MetricRowState extends State<MetricRow> {
         return Stack(
           clipBehavior: Clip.none,
           children: [
-            Container(
-              height: 6,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(3),
-                gradient: LinearGradient(
-                  colors: c.zoneColors.map((name) =>
-                    AppColors.statusColor(name).withValues(alpha: 0.7)
-                  ).toList(),
-                ),
-              ),
+            Row(
+              children: List.generate(c.zoneColors.length, (i) {
+                final isFirst = i == 0;
+                final isLast = i == c.zoneColors.length - 1;
+                return Expanded(
+                  flex: flexValues[i],
+                  child: Container(
+                    height: barHeight,
+                    margin: EdgeInsets.only(
+                      left: isFirst ? 0 : 0.5,
+                      right: isLast ? 0 : 0.5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.statusColor(c.zoneColors[i]).withValues(alpha: 0.7),
+                      borderRadius: BorderRadius.only(
+                        topLeft: isFirst ? radius : Radius.zero,
+                        bottomLeft: isFirst ? radius : Radius.zero,
+                        topRight: isLast ? radius : Radius.zero,
+                        bottomRight: isLast ? radius : Radius.zero,
+                      ),
+                    ),
+                  ),
+                );
+              }),
             ),
             Positioned(
               left: (pos * width).clamp(4, width - 4) - 4,
