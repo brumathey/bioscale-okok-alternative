@@ -439,38 +439,54 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       }
     });
 
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: isDisabled
-            ? null
-            : () {
-                _hasSaved = false;
-                if (isComplete) {
-                  ref.read(bleServiceProvider).stopScan();
-                }
-                ref.read(bleServiceProvider).startScan();
-              },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: bgColor,
-          foregroundColor: Colors.white,
-          disabledBackgroundColor: bgColor.withValues(alpha: 0.8),
-          disabledForegroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 18),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+    return Column(
+      children: [
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: isDisabled
+                ? null
+                : () {
+                    _hasSaved = false;
+                    if (isComplete) {
+                      ref.read(bleServiceProvider).stopScan();
+                    }
+                    ref.read(bleServiceProvider).startScan();
+                  },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: bgColor,
+              foregroundColor: Colors.white,
+              disabledBackgroundColor: bgColor.withValues(alpha: 0.8),
+              disabledForegroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 18),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              elevation: 4,
+            ),
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 16,
+                letterSpacing: 0.5,
+              ),
+            ),
           ),
-          elevation: 4,
         ),
-        child: Text(
-          label,
-          style: const TextStyle(
-            fontWeight: FontWeight.w800,
-            fontSize: 16,
-            letterSpacing: 0.5,
+        if (!isDisabled && !isComplete)
+          Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: Text(
+              I18nService.t('overview.weigh_hint'),
+              style: const TextStyle(
+                fontSize: 11,
+                color: AppColors.textMuted,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
           ),
-        ),
-      ),
+      ],
     );
   }
 
