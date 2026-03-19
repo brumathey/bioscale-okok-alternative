@@ -394,6 +394,77 @@ Map<String, dynamic> getAllMetrics(
 }
 
 // ---------------------------------------------------------------------------
+// Body Type Analysis
+// ---------------------------------------------------------------------------
+
+/// Grid layout (4 rows x 3 cols):
+/// Row 0: BMI > 24.9 | Row 1: BMI >= median(~21.7) | Row 2: BMI >= 18.5 | Row 3: BMI < 18.5
+/// Col 0: fat < low | Col 1: low <= fat < high | Col 2: fat >= high
+const List<List<String>> _bodyTypeGrid = [
+  ['athlete_body', 'muscular_obesity', 'obesity'],
+  ['muscular', 'healthy', 'slightly_overweight'],
+  ['lean_muscular', 'lean', 'hidden_obesity'],
+  ['skeletal_lean', 'slightly_underweight', 'empty'],
+];
+
+Map<String, dynamic> getBodyType(double bmi, double fatPercent, String sex) {
+  final fatLow = sex == 'M' ? 12.0 : 22.0;
+  final fatHigh = sex == 'M' ? 18.0 : 30.0;
+  const bmiMedian = (18.5 + 24.9) / 2;
+
+  int col = fatPercent < fatLow ? 0 : (fatPercent < fatHigh ? 1 : 2);
+  int row;
+  if (bmi > 24.9) {
+    row = 0;
+  } else if (bmi >= bmiMedian) {
+    row = 1;
+  } else if (bmi >= 18.5) {
+    row = 2;
+  } else {
+    row = 3;
+  }
+
+  final key = _bodyTypeGrid[row][col];
+  return {
+    'key': key,
+    'row': row,
+    'col': col,
+    'fat_low': fatLow,
+    'fat_high': fatHigh,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Weight Control Data
+// ---------------------------------------------------------------------------
+
+Map<String, dynamic> getWeightControlData(
+  Map<String, dynamic> metrics, String sex,
+) {
+  final weight = (metrics['weight_kg'] as num).toDouble();
+  final idealWeight = (metrics['ideal_weight_kg'] as num).toDouble();
+  final fatMassKg = (metrics['fat_mass_kg'] as num).toDouble();
+  final muscleMassKg = (metrics['muscle_mass_kg'] as num).toDouble();
+
+  final idealFatPercent = sex == 'M' ? 15.0 : 25.0;
+  final idealFatMass = idealWeight * idealFatPercent / 100;
+  final idealMuscleRatio = sex == 'M' ? 0.40 : 0.35;
+  final idealMuscleMass = idealWeight * idealMuscleRatio;
+
+  return {
+    'weight_delta': _r(weight - idealWeight, 1),
+    'fat_delta': _r(fatMassKg - idealFatMass, 1),
+    'muscle_delta': _r(muscleMassKg - idealMuscleMass, 1),
+    'ideal_weight': _r(idealWeight, 1),
+    'ideal_fat_mass': _r(idealFatMass, 1),
+    'ideal_muscle_mass': _r(idealMuscleMass, 1),
+    'current_weight': _r(weight, 1),
+    'current_fat': _r(fatMassKg, 1),
+    'current_muscle': _r(muscleMassKg, 1),
+  };
+}
+
+// ---------------------------------------------------------------------------
 // ClassificationResult
 // ---------------------------------------------------------------------------
 
