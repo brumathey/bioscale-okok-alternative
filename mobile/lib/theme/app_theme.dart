@@ -18,6 +18,8 @@ class AppColors {
   static const yellowLight = Color(0x14F1C40F);
   static const purple = Color(0xFF6C5CE7);
   static const purpleLight = Color(0x146C5CE7);
+  static const greenDark = Color(0xFF27AE60);
+  static const greenDarkLight = Color(0x1427AE60);
   static const borderLight = Color(0xFFE8ECF1);
 
   // Status colors matching Python classifications
@@ -26,13 +28,13 @@ class AppColors {
       case 'success':
         return green;
       case 'primary':
-        return blue;
+        return greenDark;
       case 'warning':
         return yellow;
       case 'danger':
         return red;
       case 'info':
-        return purple;
+        return blue;
       default:
         return textMuted;
     }
@@ -43,13 +45,13 @@ class AppColors {
       case 'success':
         return greenLight;
       case 'primary':
-        return blueLight;
+        return greenDarkLight;
       case 'warning':
         return yellowLight;
       case 'danger':
         return redLight;
       case 'info':
-        return purpleLight;
+        return blueLight;
       default:
         return bgMain;
     }

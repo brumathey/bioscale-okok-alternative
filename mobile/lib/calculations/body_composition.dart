@@ -404,6 +404,7 @@ class ClassificationResult {
   final String label;
   final String color;
   final List<double> bounds;
+  final List<String> zoneColors;
   final String desc;
   final String category;
 
@@ -414,6 +415,7 @@ class ClassificationResult {
     required this.label,
     required this.color,
     required this.bounds,
+    this.zoneColors = const ['info', 'success', 'warning', 'danger'],
     required this.desc,
     required this.category,
   });
@@ -425,6 +427,7 @@ class ClassificationResult {
         'label': label,
         'color': color,
         'bounds': bounds,
+        'zoneColors': zoneColors,
         'desc': desc,
         'category': category,
       };
@@ -474,7 +477,7 @@ Map<String, ClassificationResult> getClassifications(
     final (label, color, _) = _getClassification(val, bounds, labels, colors);
     cls['bmi'] = ClassificationResult(
       value: val, unit: 'kg/m²', name: t('metric.bmi'),
-      label: label, color: color, bounds: bounds,
+      label: label, color: color, bounds: bounds, zoneColors: colors,
       desc: t('desc.bmi'), category: 'composition',
     );
   }
@@ -505,7 +508,7 @@ Map<String, ClassificationResult> getClassifications(
     final (label, color, _) = _getClassification(val, bounds, labels, colors);
     cls['body_fat'] = ClassificationResult(
       value: val, unit: '%', name: t('metric.body_fat'),
-      label: label, color: color, bounds: bounds,
+      label: label, color: color, bounds: bounds, zoneColors: colors,
       desc: t('desc.body_fat'), category: 'composition',
     );
   }
@@ -529,7 +532,7 @@ Map<String, ClassificationResult> getClassifications(
     final (label, color, _) = _getClassification(val, bounds, labels, colors);
     cls['fat_mass'] = ClassificationResult(
       value: val, unit: 'kg', name: t('metric.fat_mass'),
-      label: label, color: color, bounds: bounds,
+      label: label, color: color, bounds: bounds, zoneColors: colors,
       desc: t('desc.fat_mass'), category: 'composition',
     );
   }
@@ -553,7 +556,7 @@ Map<String, ClassificationResult> getClassifications(
     final (label, color, _) = _getClassification(val, bounds, labels, colors);
     cls['subcutaneous_fat'] = ClassificationResult(
       value: val, unit: 'kg', name: t('metric.subcutaneous_fat'),
-      label: label, color: color, bounds: bounds,
+      label: label, color: color, bounds: bounds, zoneColors: colors,
       desc: t('desc.subcutaneous_fat'), category: 'composition',
     );
   }
@@ -567,7 +570,7 @@ Map<String, ClassificationResult> getClassifications(
     final (label, color, _) = _getClassification(val, bounds, labels, colors);
     cls['visceral_fat'] = ClassificationResult(
       value: val, unit: '', name: t('metric.visceral_fat'),
-      label: label, color: color, bounds: bounds,
+      label: label, color: color, bounds: bounds, zoneColors: colors,
       desc: t('desc.visceral_fat'), category: 'health',
     );
   }
@@ -582,11 +585,11 @@ Map<String, ClassificationResult> getClassifications(
       bounds = [60.0, 70.0, 80.0];
     }
     final labels = [t('zone.muscle_mass.1'), t('zone.muscle_mass.2'), t('zone.muscle_mass.3'), t('zone.muscle_mass.4')];
-    final colors = ['warning', 'success', 'primary', 'info'];
+    final colors = ['warning', 'success', 'primary', 'primary'];
     final (label, color, _) = _getClassification(val, bounds, labels, colors);
     cls['muscle_mass'] = ClassificationResult(
       value: val, unit: '%', name: t('metric.muscle_mass'),
-      label: label, color: color, bounds: bounds,
+      label: label, color: color, bounds: bounds, zoneColors: colors,
       desc: t('desc.muscle_mass'), category: 'composition',
     );
   }
@@ -602,11 +605,11 @@ Map<String, ClassificationResult> getClassifications(
     }
     final bounds = mBounds.map((b) => _r(w * b / 100.0, 1)).toList();
     final labels = [t('zone.muscle_mass_kg.1'), t('zone.muscle_mass_kg.2'), t('zone.muscle_mass_kg.3'), t('zone.muscle_mass_kg.4')];
-    final colors = ['warning', 'success', 'primary', 'info'];
+    final colors = ['warning', 'success', 'primary', 'primary'];
     final (label, color, _) = _getClassification(val, bounds, labels, colors);
     cls['muscle_mass_kg'] = ClassificationResult(
       value: val, unit: 'kg', name: t('metric.muscle_mass_kg'),
-      label: label, color: color, bounds: bounds,
+      label: label, color: color, bounds: bounds, zoneColors: colors,
       desc: t('desc.muscle_mass_kg'), category: 'composition',
     );
   }
@@ -621,11 +624,11 @@ Map<String, ClassificationResult> getClassifications(
       bounds = [24.0, 31.0, 40.0];
     }
     final labels = [t('zone.smm_percent.1'), t('zone.smm_percent.2'), t('zone.smm_percent.3'), t('zone.smm_percent.4')];
-    final colors = ['warning', 'success', 'primary', 'info'];
+    final colors = ['warning', 'success', 'primary', 'primary'];
     final (label, color, _) = _getClassification(val, bounds, labels, colors);
     cls['smm_percent'] = ClassificationResult(
       value: val, unit: '%', name: t('metric.smm_percent'),
-      label: label, color: color, bounds: bounds,
+      label: label, color: color, bounds: bounds, zoneColors: colors,
       desc: t('desc.smm_percent'), category: 'composition',
     );
   }
@@ -640,11 +643,11 @@ Map<String, ClassificationResult> getClassifications(
       bounds = [14.0, 20.0, 28.0];
     }
     final labels = [t('zone.smm.1'), t('zone.smm.2'), t('zone.smm.3'), t('zone.smm.4')];
-    final colors = ['warning', 'success', 'primary', 'info'];
+    final colors = ['warning', 'success', 'primary', 'primary'];
     final (label, color, _) = _getClassification(val, bounds, labels, colors);
     cls['smm'] = ClassificationResult(
       value: val, unit: 'kg', name: t('metric.smm'),
-      label: label, color: color, bounds: bounds,
+      label: label, color: color, bounds: bounds, zoneColors: colors,
       desc: t('desc.smm'), category: 'composition',
     );
   }
@@ -659,11 +662,11 @@ Map<String, ClassificationResult> getClassifications(
       bounds = [w * 0.60, w * 0.70, w * 0.80];
     }
     final labels = [t('zone.lbm.1'), t('zone.lbm.2'), t('zone.lbm.3'), t('zone.lbm.4')];
-    final colors = ['warning', 'success', 'primary', 'info'];
+    final colors = ['warning', 'success', 'primary', 'primary'];
     final (label, color, _) = _getClassification(val, bounds, labels, colors);
     cls['lbm'] = ClassificationResult(
       value: val, unit: 'kg', name: t('metric.lbm'),
-      label: label, color: color, bounds: bounds,
+      label: label, color: color, bounds: bounds, zoneColors: colors,
       desc: t('desc.lbm'), category: 'composition',
     );
   }
@@ -682,7 +685,7 @@ Map<String, ClassificationResult> getClassifications(
     final (label, color, _) = _getClassification(val, bounds, labels, colors);
     cls['body_water'] = ClassificationResult(
       value: val, unit: '%', name: t('metric.body_water'),
-      label: label, color: color, bounds: bounds,
+      label: label, color: color, bounds: bounds, zoneColors: colors,
       desc: t('desc.body_water'), category: 'composition',
     );
   }
@@ -702,7 +705,7 @@ Map<String, ClassificationResult> getClassifications(
     final (label, color, _) = _getClassification(val, bounds, labels, colors);
     cls['water_mass'] = ClassificationResult(
       value: val, unit: 'kg', name: t('metric.water_mass'),
-      label: label, color: color, bounds: bounds,
+      label: label, color: color, bounds: bounds, zoneColors: colors,
       desc: t('desc.water_mass'), category: 'composition',
     );
   }
@@ -717,11 +720,11 @@ Map<String, ClassificationResult> getClassifications(
       bounds = [1.8, 2.5, 3.5];
     }
     final labels = [t('zone.bone_mass.1'), t('zone.bone_mass.2'), t('zone.bone_mass.3'), t('zone.bone_mass.4')];
-    final colors = ['warning', 'success', 'primary', 'info'];
+    final colors = ['warning', 'success', 'primary', 'primary'];
     final (label, color, _) = _getClassification(val, bounds, labels, colors);
     cls['bone_mass'] = ClassificationResult(
       value: val, unit: 'kg', name: t('metric.bone_mass'),
-      label: label, color: color, bounds: bounds,
+      label: label, color: color, bounds: bounds, zoneColors: colors,
       desc: t('desc.bone_mass'), category: 'composition',
     );
   }
@@ -731,11 +734,11 @@ Map<String, ClassificationResult> getClassifications(
     final val = (metrics['protein_percent'] as num).toDouble();
     final bounds = [16.0, 20.0, 24.0];
     final labels = [t('zone.protein.1'), t('zone.protein.2'), t('zone.protein.3'), t('zone.protein.4')];
-    final colors = ['warning', 'success', 'primary', 'info'];
+    final colors = ['warning', 'success', 'primary', 'primary'];
     final (label, color, _) = _getClassification(val, bounds, labels, colors);
     cls['protein'] = ClassificationResult(
       value: val, unit: '%', name: t('metric.protein'),
-      label: label, color: color, bounds: bounds,
+      label: label, color: color, bounds: bounds, zoneColors: colors,
       desc: t('desc.protein'), category: 'composition',
     );
   }
@@ -754,7 +757,7 @@ Map<String, ClassificationResult> getClassifications(
     final (label, color, _) = _getClassification(val, bounds, labels, colors);
     cls['bmr'] = ClassificationResult(
       value: val, unit: 'kcal', name: t('metric.bmr'),
-      label: label, color: color, bounds: bounds,
+      label: label, color: color, bounds: bounds, zoneColors: colors,
       desc: t('desc.bmr'), category: 'metabolic',
     );
   }
@@ -768,7 +771,7 @@ Map<String, ClassificationResult> getClassifications(
     final (label, color, _) = _getClassification(val, bounds, labels, colors);
     cls['obesity_percent'] = ClassificationResult(
       value: val, unit: '%', name: t('metric.obesity_percent'),
-      label: label, color: color, bounds: bounds,
+      label: label, color: color, bounds: bounds, zoneColors: colors,
       desc: t('desc.obesity_percent'), category: 'health',
     );
   }
@@ -782,7 +785,7 @@ Map<String, ClassificationResult> getClassifications(
     final (label, color, _) = _getClassification(val, bounds, labels, colors);
     cls['body_score'] = ClassificationResult(
       value: val, unit: '/100', name: t('metric.body_score'),
-      label: label, color: color, bounds: bounds,
+      label: label, color: color, bounds: bounds, zoneColors: colors,
       desc: t('desc.body_score'), category: 'health',
     );
   }
@@ -792,6 +795,7 @@ Map<String, ClassificationResult> getClassifications(
     final iw = (metrics['ideal_weight_kg'] as num).toDouble();
     final diff = w - iw;
     final bounds = [iw - 5.0, iw, iw + 5.0];
+    final iwZoneColors = ['warning', 'success', 'info', 'warning'];
     String label;
     String color;
     if (diff.abs() < 3) {
@@ -799,15 +803,15 @@ Map<String, ClassificationResult> getClassifications(
       color = 'success';
     } else if (diff.abs() < 8) {
       label = t('zone.ideal_weight.3');
-      color = 'primary';
+      color = 'warning';
     } else {
       label = t('zone.ideal_weight.4');
-      color = 'warning';
+      color = 'danger';
     }
     final desc = t('desc.ideal_weight').replaceAll('{diff}', diff.toStringAsFixed(1));
     cls['ideal_weight'] = ClassificationResult(
       value: iw, unit: 'kg', name: t('metric.ideal_weight'),
-      label: label, color: color, bounds: bounds,
+      label: label, color: color, bounds: bounds, zoneColors: iwZoneColors,
       desc: desc, category: 'health',
     );
   }
@@ -822,7 +826,7 @@ Map<String, ClassificationResult> getClassifications(
     final (label, color, _) = _getClassification(val, bounds, labels, colors);
     cls['metabolic_age'] = ClassificationResult(
       value: val, unit: t('common.years'), name: t('metric.metabolic_age'),
-      label: label, color: color, bounds: bounds,
+      label: label, color: color, bounds: bounds, zoneColors: colors,
       desc: t('desc.metabolic_age'), category: 'metabolic',
     );
   }
@@ -837,11 +841,11 @@ Map<String, ClassificationResult> getClassifications(
       bounds = [14.0, 17.0, 21.0];
     }
     final labels = [t('zone.ffmi.1'), t('zone.ffmi.2'), t('zone.ffmi.3'), t('zone.ffmi.4')];
-    final colors = ['warning', 'success', 'primary', 'info'];
+    final colors = ['warning', 'success', 'primary', 'primary'];
     final (label, color, _) = _getClassification(val, bounds, labels, colors);
     cls['ffmi'] = ClassificationResult(
       value: val, unit: 'kg/m²', name: t('metric.ffmi'),
-      label: label, color: color, bounds: bounds,
+      label: label, color: color, bounds: bounds, zoneColors: colors,
       desc: t('desc.ffmi'), category: 'composition',
     );
   }
@@ -860,7 +864,7 @@ Map<String, ClassificationResult> getClassifications(
     final (label, color, _) = _getClassification(val, bounds, labels, colors);
     cls['smi'] = ClassificationResult(
       value: val, unit: 'kg/m²', name: t('metric.smi'),
-      label: label, color: color, bounds: bounds,
+      label: label, color: color, bounds: bounds, zoneColors: colors,
       desc: t('desc.smi'), category: 'composition',
     );
   }
@@ -879,7 +883,7 @@ Map<String, ClassificationResult> getClassifications(
     final (label, color, _) = _getClassification(val, bounds, labels, colors);
     cls['whr'] = ClassificationResult(
       value: val, unit: '', name: t('metric.whr'),
-      label: label, color: color, bounds: bounds,
+      label: label, color: color, bounds: bounds, zoneColors: colors,
       desc: t('desc.whr'), category: 'health',
     );
   }
@@ -893,7 +897,7 @@ Map<String, ClassificationResult> getClassifications(
     final (label, color, _) = _getClassification(val, bounds, labels, colors);
     cls['whtr'] = ClassificationResult(
       value: val, unit: '', name: t('metric.whtr'),
-      label: label, color: color, bounds: bounds,
+      label: label, color: color, bounds: bounds, zoneColors: colors,
       desc: t('desc.whtr'), category: 'health',
     );
   }

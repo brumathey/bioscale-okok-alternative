@@ -161,12 +161,9 @@ class _MetricRowState extends State<MetricRow> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(3),
                 gradient: LinearGradient(
-                  colors: [
-                    AppColors.blue.withValues(alpha: 0.7),
-                    AppColors.green.withValues(alpha: 0.7),
-                    AppColors.yellow.withValues(alpha: 0.7),
-                    AppColors.red.withValues(alpha: 0.7),
-                  ],
+                  colors: c.zoneColors.map((name) =>
+                    AppColors.statusColor(name).withValues(alpha: 0.7)
+                  ).toList(),
                 ),
               ),
             ),
