@@ -340,5 +340,7 @@
   "desc.whtr": "Rapport entre tour de taille et taille. Règle simple : votre tour de taille doit mesurer moins de la moitié de votre taille. Moins de 0.5 = sain. Plus de 0.5 = risque accru de maladies cardiaques. Considéré par de nombreux chercheurs comme meilleur que l'IMC pour prédire les risques de santé.",
   "overview.weigh_again": "Peser à Nouveau",
   "overview.goal_save": "Enregistrer l'Objectif",
+  "overview.goal_start": "DÉBUT",
+  "overview.goal_progress": "{percent}% terminé",
   "composition.share": "Partager"
 }

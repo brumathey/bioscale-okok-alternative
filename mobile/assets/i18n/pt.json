@@ -340,5 +340,7 @@
   "desc.whtr": "Relação entre cintura e altura. Regra simples: sua cintura deve medir menos da metade da sua altura. Abaixo de 0.5 = saudável. Acima de 0.5 = risco aumentado de doenças cardíacas. Considerado por muitos pesquisadores melhor que o IMC para prever riscos à saúde.",
   "overview.weigh_again": "Pesar Novamente",
   "overview.goal_save": "Salvar Meta",
+  "overview.goal_start": "INÍCIO",
+  "overview.goal_progress": "{percent}% concluído",
   "composition.share": "Compartilhar"
 }

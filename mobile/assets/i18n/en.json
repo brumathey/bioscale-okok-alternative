@@ -340,5 +340,7 @@
   "desc.whtr": "Ratio between waist and height. Simple rule: your waist should measure less than half your height. Below 0.5 = healthy. Above 0.5 = increased risk of heart disease. Considered by many researchers better than BMI for predicting health risks.",
   "overview.weigh_again": "Weigh Again",
   "overview.goal_save": "Save Goal",
+  "overview.goal_start": "START",
+  "overview.goal_progress": "{percent}% complete",
   "composition.share": "Share"
 }

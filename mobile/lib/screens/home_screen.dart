@@ -21,6 +21,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Map<String, dynamic>? _user;
   Map<String, dynamic>? _lastMeasurement;
   Map<String, dynamic>? _prevMeasurement;
+  List<Map<String, dynamic>> _allMeasurements = [];
   List<Map<String, dynamic>> _goals = [];
   bool _loading = true;
   bool _hasSaved = false;
@@ -42,7 +43,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       return;
     }
 
-    final measurements = await db.getMeasurements(user['id'] as int, limit: 2);
+    final measurements = await db.getMeasurements(user['id'] as int, limit: 100);
     var goals = await db.getGoals(user['id'] as int);
 
     // Auto-create goal with ideal weight (BMI 22) if none exists
@@ -63,6 +64,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         _user = user;
         _lastMeasurement = measurements.isNotEmpty ? measurements.first : null;
         _prevMeasurement = measurements.length > 1 ? measurements[1] : null;
+        _allMeasurements = measurements;
         _goals = goals;
         _loading = false;
       });
@@ -212,6 +214,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     idealWeight: _user?['height_cm'] != null
                         ? 22.0 * ((_user!['height_cm'] as num).toDouble() / 100.0) * ((_user!['height_cm'] as num).toDouble() / 100.0)
                         : null,
+                    measurements: _allMeasurements,
                     onGoalUpdated: _loadData,
                   ),
                 const SizedBox(height: 16),

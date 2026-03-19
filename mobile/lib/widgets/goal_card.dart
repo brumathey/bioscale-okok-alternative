@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../services/i18n_service.dart';
 import '../database/database_helper.dart';
+import 'goal_gauge.dart';
 
 class GoalCard extends StatelessWidget {
   final Map<String, dynamic> goal;
   final double? currentWeight;
   final double? idealWeight;
+  final List<Map<String, dynamic>> measurements;
   final VoidCallback? onGoalUpdated;
 
   const GoalCard({
@@ -14,6 +16,7 @@ class GoalCard extends StatelessWidget {
     required this.goal,
     this.currentWeight,
     this.idealWeight,
+    this.measurements = const [],
     this.onGoalUpdated,
   });
 
@@ -107,7 +110,7 @@ class GoalCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader(context, null),
+            _buildHeader(context),
             const SizedBox(height: 8),
             Text(
               '${I18nService.t('overview.goal_target')}: ${targetWeight.toStringAsFixed(1)} kg',
@@ -125,45 +128,20 @@ class GoalCard extends StatelessWidget {
       );
     }
 
-    final weight = currentWeight!;
-    final diff = (weight - targetWeight).abs();
-    final isLoss = targetWeight < weight;
-    final totalRange = isLoss ? weight - targetWeight : targetWeight - weight;
-    final progress = totalRange > 0 ? (diff / totalRange).clamp(0.0, 1.0) : 1.0;
-    final isReached = diff < 0.5;
-
-    String statusText;
-    if (isReached) {
-      statusText = I18nService.t('overview.goal_reached');
-    } else if (isLoss) {
-      statusText = I18nService.t('overview.goal_remain').replaceAll('{diff}', diff.toStringAsFixed(1));
-    } else {
-      statusText = I18nService.t('overview.goal_gain').replaceAll('{diff}', diff.toStringAsFixed(1));
-    }
+    // Get start weight from oldest measurement in history
+    final startWeight = measurements.isNotEmpty
+        ? (measurements.last['weight_kg'] as num).toDouble()
+        : currentWeight!;
 
     return _buildCard(
       context: context,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildHeader(context, statusText, isReached: isReached),
-          const SizedBox(height: 12),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: 1.0 - progress,
-              minHeight: 8,
-              backgroundColor: AppColors.borderLight,
-              color: isReached ? AppColors.green : AppColors.blue,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _label(I18nService.t('overview.goal_current'), '${weight.toStringAsFixed(1)} kg'),
-              _label(I18nService.t('overview.goal_target'), '${targetWeight.toStringAsFixed(1)} kg'),
-            ],
+          _buildHeader(context),
+          GoalGauge(
+            startWeight: startWeight,
+            currentWeight: currentWeight!,
+            targetWeight: targetWeight,
           ),
         ],
       ),
@@ -189,7 +167,7 @@ class GoalCard extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context, String? statusText, {bool isReached = false}) {
+  Widget _buildHeader(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -203,44 +181,9 @@ class GoalCard extends StatelessWidget {
             ),
           ),
         ),
-        if (statusText != null)
-          Text(
-            statusText,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: isReached ? AppColors.green : AppColors.blue,
-            ),
-          ),
-        const SizedBox(width: 8),
         GestureDetector(
           onTap: () => _showEditGoal(context),
           child: const Icon(Icons.edit_outlined, size: 18, color: AppColors.textMuted),
-        ),
-      ],
-    );
-  }
-
-  Widget _label(String title, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 9,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textMuted,
-            letterSpacing: 0.5,
-          ),
-        ),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
-          ),
         ),
       ],
     );
