@@ -52,7 +52,7 @@ def run_ble_workflow():
                 return
                 
             for company_id, data in mfg_data.items():
-                decoded = decode_okok_broadcast(company_id, data)
+                decoded = decode_okok_broadcast(company_id, data, device.address)
                 if decoded:
                     app_state.set_status(f"Conectado (Broadcast {device.address[-5:]})...", device_name="Chipsea/OKOK Scale")
                     

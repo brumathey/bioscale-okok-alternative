@@ -181,6 +181,7 @@ BioScale works with smart scales using the **Chipsea chipset**, which is common 
 - Scales that use the OKOK·International app
 - Generic Bluetooth body fat scales (AliExpress, Amazon, Shopee, Mercado Livre)
 - Any scale advertising compatibility with "OKOK", "OKOK·International", or "Chipsea"
+- Scales broadcasting as "Yoda1" (OKOK broadcast variant without the `0a 01` marker)
 
 ## Desktop App Installation
 

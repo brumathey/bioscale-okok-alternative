@@ -68,6 +68,7 @@ class BleService {
   Stream<BleState> get stateStream => _stateController.stream;
 
   StreamSubscription<List<ScanResult>>? _scanSubscription;
+  StreamSubscription<bool>? _isScanningSubscription;
   StreamSubscription<BluetoothConnectionState>? _connectionSubscription;
   List<StreamSubscription<List<int>>>? _charSubscriptions;
 
@@ -75,6 +76,8 @@ class BleService {
   BleState _currentState = const BleState();
 
   // ── Public API ─────────────────────────────────────────────────────────
+
+  static const scanTimeout = Duration(seconds: 30);
 
   /// Start scanning for compatible Chipsea / OKOK scales.
   Future<void> startScan() async {
@@ -107,9 +110,27 @@ class BleService {
         },
       );
 
+      // When the scan stops on its own (timeout) and nothing was found,
+      // leave the "step on the scale" state instead of hanging forever.
+      _isScanningSubscription?.cancel();
+      _isScanningSubscription = FlutterBluePlus.isScanning.skip(1).listen((scanning) {
+        if (!scanning && _currentState.status == BleStatus.scanning) {
+          _scanSubscription?.cancel();
+          _scanSubscription = null;
+          _emit(const BleState(
+            status: BleStatus.error,
+            errorMessage: 'No scale found. Tap to try again.',
+          ));
+        }
+      });
+
       // Begin scanning
+      // continuousUpdates: broadcast scales send the live weight in every
+      // advertisement. Without it Android reports only the first advert per
+      // device, so the reading would never update after stepping on.
       await FlutterBluePlus.startScan(
-        timeout: const Duration(seconds: 30),
+        timeout: scanTimeout,
+        continuousUpdates: true,
       );
     } catch (e) {
       _emit(BleState(
@@ -121,6 +142,8 @@ class BleService {
 
   /// Stop scanning and disconnect any connected device.
   Future<void> stopScan() async {
+    _isScanningSubscription?.cancel();
+    _isScanningSubscription = null;
     await FlutterBluePlus.stopScan();
     _scanSubscription?.cancel();
     _scanSubscription = null;
@@ -130,6 +153,7 @@ class BleService {
 
   /// Release all resources.
   void dispose() {
+    _isScanningSubscription?.cancel();
     _scanSubscription?.cancel();
     _connectionSubscription?.cancel();
     _cancelCharSubscriptions();
@@ -140,6 +164,12 @@ class BleService {
   // ── Scan handling ──────────────────────────────────────────────────────
 
   void _onScanResults(List<ScanResult> results) {
+    // With continuousUpdates the same device is reported repeatedly; ignore
+    // results once a measurement completed or a connection is underway.
+    if (_currentState.status != BleStatus.scanning &&
+        _currentState.status != BleStatus.measuring) {
+      return;
+    }
     for (final result in results) {
       // 1) Try manufacturer data broadcast decoding (OKOK)
       final mfData = result.advertisementData.manufacturerData;
@@ -147,7 +177,11 @@ class BleService {
         final companyId = entry.key;
         final bytes = Uint8List.fromList(entry.value);
         final broadcast =
-            BleBroadcastDecoder.decodeOkokBroadcast(companyId, bytes);
+            BleBroadcastDecoder.decodeOkokBroadcast(
+          companyId,
+          bytes,
+          deviceAddress: result.device.remoteId.str,
+        );
         if (broadcast != null) {
           _handleBroadcast(broadcast, result.device);
           return;
@@ -188,7 +222,9 @@ class BleService {
   Future<void> _onDeviceFound(BluetoothDevice device, String name) async {
     _emit(BleState(status: BleStatus.found, deviceName: name));
 
-    // Stop scanning before connecting
+    // Stop scanning before connecting (not a timeout, so drop the watcher)
+    _isScanningSubscription?.cancel();
+    _isScanningSubscription = null;
     await FlutterBluePlus.stopScan();
     _scanSubscription?.cancel();
     _scanSubscription = null;

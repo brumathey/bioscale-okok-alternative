@@ -2,7 +2,18 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def decode_okok_broadcast(company_id: int, byte_data: bytes):
+def _tail_matches_mac(byte_data: bytes, address) -> bool:
+    """True when bytes 7-12 equal the advertiser MAC (AA:BB:CC:DD:EE:FF)."""
+    if not address:
+        return False
+    try:
+        mac = bytes.fromhex(address.replace(":", "").replace("-", ""))
+    except ValueError:
+        return False
+    return len(mac) == 6 and byte_data[7:13] == mac
+
+
+def decode_okok_broadcast(company_id: int, byte_data: bytes, device_address=None):
     """
     Decodifica o payload "Manufacturer Data" passivo emitido 
     por balanças Chipsea/OKOK, modelo F-6988 e similares.
@@ -13,7 +24,10 @@ def decode_okok_broadcast(company_id: int, byte_data: bytes):
         return None
         
     # A assinatura clássica da OKOK no meio do payload é 0x0A 0x01 (nos bytes 4 e 5)
-    if byte_data[4] != 0x0a or byte_data[5] != 0x01:
+    # Variante "Yoda1": bytes 4-5 = 00 00 e bytes 7-12 = MAC da propria balanca,
+    # ex. 35 89 13 88 00 00 25 80 f4 16 31 9a 8b = 137.05 kg, 500.0 ohm.
+    classic_magic = byte_data[4] == 0x0a and byte_data[5] == 0x01
+    if not classic_magic and not _tail_matches_mac(byte_data, device_address):
         return None
 
     hex_data = byte_data.hex()
